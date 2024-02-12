@@ -1,7 +1,58 @@
-# Tauri + React + Typescript
+Singer:
+Inteligent system for giving hints human how to sing more align with given spotify song.
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+user_raw = remove_noise(isolate_vocal(input_from_recorder))
+target_raw = isolate_vocal(downland("spotify/name_of_song"))
 
-## Recommended IDE Setup
+Input: user_raw[t]
+Expected: target_raw[t+1]
+Cost: how align are sounds between
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+At the end of recording, the song is showed in with 3 or 4 places where sound does not match the orginal.
+
+    the sound dynamic goes like this:
+        dun du du da
+              ^
+|-------------X--------------------XXX-----X-----X---------|
+
+
+At the start I would like to use heuristic based detection (after fourier transform)
+Along the way I will use AI for comparing raw format files, to learn what to tell human that will improve his next performance
+
+    AI told you this hint
+              ^
+|-------------X--------------------XXX-----X-----X---------|
+
+and in next try I improved in this place
+
+|-------------x--------------------XXX-----X-----X---------|
+
+this could mean that such hint helped me to get better in such and such case.
+
+
+STEPS:
+
+heuristic angle: transform both outputs with fourier algorythm
+    + the error will be easy computable
+    + the differences in each category (sound pitch, ) will be visible
+
+subjective angle: analyze sounds by myself insert some notes
+    + this will give ai some insight about what kind of feedback I need and where are
+
+automate_stuff
+    + load song automatically from spotify (DownOnSpot)
+    + record
+    + create gui for difference visualization
+
+Start using app as quick as possible:
+- create tool that will downland some song from Spotify split it with CLI tool (hardcode id for now)
+  - Prepare: downland split it with CLI tool (cache result)
+  - Record trial: record audio, show subtitles and notes (record as trial)
+    - play instrumental music
+    - show subtitles and notes in along the way 
+    - start recording in using QuickTime
+      osascript -e 'tell application "QuickTime Player" to activate' -e 'tell application "QuickTime Player" to start (new audio recording)'
+  - <THATS CORE> Analyze trial: remove noise, allow to insert notes in time, mix my vocal with isolated instruments
+
+external ai angle: find corelation between those two ^
+
