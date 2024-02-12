@@ -1,6 +1,5 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/tauri";
+import { Command } from "@tauri-apps/api/shell";
 import "./App.css";
 
 function App() {
@@ -8,27 +7,32 @@ function App() {
   const [name, setName] = useState("");
 
   async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
+
+    // const command = new Command('/Users/raf/projects/DownOnSpot/target/release/down_on_spot');
+    // command.on('close', data => {
+    //   console.log(`command finished with code ${data.code} and signal ${data.signal}`)
+    // });
+    // command.on('error', error => console.error(`command error: "${error}"`));
+    // command.stdout.on('data', line => console.log(`command stdout: "${line}"`));
+    // command.stderr.on('data', line => console.log(`command stderr: "${line}"`));
+
+    const command = new Command('down_on_spot', ["The Doors - The End"]);
+
+    command.on('close', data => {
+      console.log(`command finished with code ${data.code} and signal ${data.signal}`)
+    });
+    command.on('error', error => console.error(`command error: "${error}"`));
+    command.stdout.on('data', line => console.log(`command stdout: "${line}"`));
+    command.stderr.on('data', line => console.log(`command stderr: "${line}"`));
+
+    const child = await command.spawn();
+    await child.write('1\n');
+
+
   }
 
   return (
     <div className="container">
-      <h1>Welcome to Tauri!</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
 
       <form
         className="row"

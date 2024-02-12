@@ -11,9 +11,17 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false,
+      "all": true,
       "shell": {
-        "all": false,
+        "scope": [
+          {
+            "name": "down_on_spot",
+            "cmd": "/Users/raf/projects/DownOnSpot/target/release/down_on_spot",
+            "args": true
+          }
+        ],
+        "all": true,
+        "execute": true,
         "open": true
       }
     },
