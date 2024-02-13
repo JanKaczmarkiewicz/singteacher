@@ -1,35 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Command } from "@tauri-apps/api/shell";
+import { readDir, BaseDirectory } from "@tauri-apps/api/fs"
 import "./App.css";
+import { Link } from "react-router-dom";
+
+const fetchListOfSongs = async () => readDir("", { dir: BaseDirectory.AppLocalData }).then((files) =>
+  files.map((file) => file.name!)
+)
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
 
-  async function greet() {
-
-    // const command = new Command('/Users/raf/projects/DownOnSpot/target/release/down_on_spot');
-    // command.on('close', data => {
-    //   console.log(`command finished with code ${data.code} and signal ${data.signal}`)
-    // });
-    // command.on('error', error => console.error(`command error: "${error}"`));
-    // command.stdout.on('data', line => console.log(`command stdout: "${line}"`));
-    // command.stderr.on('data', line => console.log(`command stderr: "${line}"`));
-
-    const command = new Command('down_on_spot', ["The Doors - The End"]);
-
+  async function createSong() {
+    const command = new Command('down_on_spot', [song]);
     command.on('close', data => {
       console.log(`command finished with code ${data.code} and signal ${data.signal}`)
     });
     command.on('error', error => console.error(`command error: "${error}"`));
     command.stdout.on('data', line => console.log(`command stdout: "${line}"`));
     command.stderr.on('data', line => console.log(`command stderr: "${line}"`));
-
     const child = await command.spawn();
-    await child.write('1\n');
+    await child.write('\n');
 
-
+    command.once("close", () => fetchListOfSongs().then(setListOfSongs))
   }
+
+  const [song, setSong] = useState("");
+  const [listOfSongs, setListOfSongs] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchListOfSongs().then(setListOfSongs)
+  }, [])
+
 
   return (
     <div className="container">
@@ -38,18 +39,23 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          greet();
+          createSong();
         }}
       >
         <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
+          value={song}
+          onChange={(n) => setSong(n.target.value)}
+          placeholder="Enter a name of song..."
         />
-        <button type="submit">Greet</button>
+        <button type="submit">Prepare</button>
       </form>
 
-      <p>{greetMsg}</p>
+      {listOfSongs.map((songName) =>
+        <div key={songName}>
+          {songName}
+          <Link to={`/singing/${songName}`}>Sing</Link>
+        </div>
+      )}
     </div>
   );
 }

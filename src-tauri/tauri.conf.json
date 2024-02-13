@@ -11,11 +11,21 @@
   },
   "tauri": {
     "allowlist": {
+      "fs": {
+        "scope": [
+          "$APPLOCALDATA"
+        ]
+      },
       "all": true,
       "shell": {
         "scope": [
           {
             "name": "down_on_spot",
+            "cmd": "/Users/raf/projects/DownOnSpot/target/release/down_on_spot",
+            "args": true
+          },
+          {
+            "name": "convert",
             "cmd": "/Users/raf/projects/DownOnSpot/target/release/down_on_spot",
             "args": true
           }
